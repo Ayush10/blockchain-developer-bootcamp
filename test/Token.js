@@ -5,13 +5,16 @@ const tokens = (n) => ethers.utils.parseEther(n.toString(), "ether");
 
 describe("Token", () => {
   // Tests go inside here
-  let token;
+  let token, accounts, deployer;
 
   beforeEach(async () => {
     // Deploy the contract and Fetch Token from Blockchain
     const Token = await ethers.getContractFactory("Token");
-    token = await Token.deploy();
+    token = await Token.deploy("Ayush Coin", "AYC", "520000000");
     await token.deployed();
+
+    accounts = await ethers.getSigners();
+    deployer = accounts[0];
   });
 
   describe("Deployment", () => {
@@ -40,6 +43,10 @@ describe("Token", () => {
       //   const value = tokens("520000000");
       //   const value = ethers.utils.parseEther(totalSupply, ethers);
       expect(await token.totalSupply()).to.equal(totalSupply);
+    });
+
+    it("assigns total supply to deployer", async () => {
+      expect(await token.balanceOf(deployer.address)).to.equal(totalSupply);
     });
   });
 });
